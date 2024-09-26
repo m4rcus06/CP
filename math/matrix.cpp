@@ -33,72 +33,81 @@ public:
     const vector<T>& operator[](int i) const {
         return mat[i];
     }
-};
 
-template<typename T>
-matrix<T> multiply(const matrix<T> &a, const matrix<T> &b) {
-    assert(a.col_nums() == b.row_nums());
-    int n = a.row_nums();
-    int p = b.col_nums();
-    int m = b.row_nums();
+    static matrix<T> I(int n) {
+        matrix<T> res(n, n);
+        for (int i = 1; i <= n; ++i) {
+            res[i][i] = 1;
+        }
+        return res;
+    }
 
-    matrix<T> res(n, p);
-    for (int i = 1; i <= n; ++i) {
-        for (int j = 1; j <= p; ++j) {
-            for (int k = 1; k <= m; ++k) {
-                res[i][j] += a[i][k] * b[k][j];
+    matrix<T> operator* (const matrix<T> &b) {
+        assert(n == b.row_nums());
+
+        int p = b.col_nums();
+
+        matrix<T> res(n, p);
+        for (int i = 1; i <= n; ++i) {
+            for (int j = 1; j <= p; ++j) {
+                for (int k = 1; k <= m; ++k) {
+                    res[i][j] += mat[i][k] * b[k][j];
+                }
             }
         }
+
+        return res;
     }
 
-    return res;
-}
-
-template<typename T>
-matrix<T> add(const matrix<T> &a, T val) {
-    int n = a.row_nums();
-    int m = a.col_nums();
-
-    matrix<T> res(n, m);
-    for (int i = 1; i <= n; ++i) {
-        for (int j = 1; j <= m; ++j) {
-            res[i][j] = a[i][j] + val;
+    matrix<T> operator+ (T val) {
+        matrix<T> res(n, m);
+        for (int i = 1; i <= n; ++i) {
+            for (int j = 1; j <= m; ++j) {
+                res[i][j] = mat[i][j] + val;
+            }
         }
+
+        return res;
     }
 
-    return res;
-}
+    matrix<T> operator+ (const matrix<T> &b) {
+        assert(n == b.col_nums() && m == b.row_nums());
 
-template<typename T>
-matrix<T> add(const matrix<T> &a, const matrix<T> &b) {
-    assert(a.col_nums() == b.col_nums() && a.row_nums() == b.row_nums());
-
-    int n = a.row_nums();
-    int m = a.col_nums();
-
-    matrix<T> res(n, m);
-    for (int i = 1; i <= n; ++i) {
-        for (int j = 1; j <= m; ++j) {
-            res[i][j] = a[i][j] + b[i][j];
+        matrix<T> res(n, m);
+        for (int i = 1; i <= n; ++i) {
+            for (int j = 1; j <= m; ++j) {
+                res[i][j] = mat[i][j] + b[i][j];
+            }
         }
+
+        return res;
     }
 
-    return res;
-}
+    static matrix<T> pow(const matrix<T> &a, int64_t n) {
+        int sz = a.row_nums();
 
-template<typename T>
-matrix<T> pow(const matrix<T> &a, int64_t n) {
-    matrix<T> tmp = a;
-    matrix<T> res = a;
-    while (n > 0) {
-        if (n & 1) res = multiply(res, tmp);
-        tmp = multiply(tmp, tmp);
-        n >>= 1;
+        matrix<T> tmp = a;
+        matrix<T> res = I(sz);
+        while (n > 0) {
+            if (n & 1) res = res * tmp;
+            tmp = tmp * tmp;
+            n >>= 1;
+        }
+        return res;
     }
-    return res;
-}
+};
+
+using mat = matrix<int>;
 
 void solve() {
+    mat a(2, 2);
+    a[1][1] = 1;
+    a[1][2] = 3;
+    a[2][1] = 0;
+    a[2][2] = 1;
+
+    a = mat::pow(a, 200);
+    cout << a[1][2];
 }
 
 int main() {
