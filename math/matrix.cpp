@@ -102,12 +102,17 @@ using mat = matrix<int>;
 void solve() {
     mat a(2, 2);
     a[1][1] = 1;
-    a[1][2] = 3;
-    a[2][1] = 0;
-    a[2][2] = 1;
+    a[1][2] = 1;
+    a[2][1] = 1;
+    a[2][2] = 0;
 
-    a = mat::pow(a, 200);
-    cout << a[1][2];
+    a = mat::pow(a, 3);
+    for (int i = 1; i <= a.row_nums(); ++i) {
+        for (int j = 1; j <= a.col_nums(); ++j) {
+            cout << a[i][j] << ' ';
+        }
+        cout << '\n';
+    }
 }
 
 int main() {
