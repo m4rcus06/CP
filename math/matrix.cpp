@@ -15,7 +15,11 @@ private:
 
 public:
     matrix(int n, int m): n(n), m(m) {
-        mat.resize(n + 1, vector<T>(m + 1, {}));
+        mat.resize(n, vector<T>(m, {}));
+    };
+
+    matrix(int n): n(n), m(n) {
+        mat.resize(n, vector<T>(n, {}));
     };
 
     int row_nums() const {
@@ -27,16 +31,18 @@ public:
     }
 
     vector<T>& operator[](int i) {
+        assert(i >= 0);
         return mat[i];
     }
 
     const vector<T>& operator[](int i) const {
+        assert(i >= 0);
         return mat[i];
     }
 
     static matrix<T> I(int n) {
         matrix<T> res(n, n);
-        for (int i = 1; i <= n; ++i) {
+        for (int i = 0; i < n; ++i) {
             res[i][i] = 1;
         }
         return res;
@@ -48,9 +54,9 @@ public:
         int p = b.col_nums();
 
         matrix<T> res(n, p);
-        for (int i = 1; i <= n; ++i) {
-            for (int j = 1; j <= p; ++j) {
-                for (int k = 1; k <= m; ++k) {
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < p; ++j) {
+                for (int k = 0; k < m; ++k) {
                     res[i][j] += mat[i][k] * b[k][j];
                 }
             }
@@ -61,8 +67,8 @@ public:
 
     matrix<T> operator+ (T val) {
         matrix<T> res(n, m);
-        for (int i = 1; i <= n; ++i) {
-            for (int j = 1; j <= m; ++j) {
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
                 res[i][j] = mat[i][j] + val;
             }
         }
@@ -74,8 +80,8 @@ public:
         assert(n == b.col_nums() && m == b.row_nums());
 
         matrix<T> res(n, m);
-        for (int i = 1; i <= n; ++i) {
-            for (int j = 1; j <= m; ++j) {
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
                 res[i][j] = mat[i][j] + b[i][j];
             }
         }
@@ -100,19 +106,6 @@ public:
 using mat = matrix<int>;
 
 void solve() {
-    mat a(2, 2);
-    a[1][1] = 1;
-    a[1][2] = 1;
-    a[2][1] = 1;
-    a[2][2] = 0;
-
-    a = mat::pow(a, 3);
-    for (int i = 1; i <= a.row_nums(); ++i) {
-        for (int j = 1; j <= a.col_nums(); ++j) {
-            cout << a[i][j] << ' ';
-        }
-        cout << '\n';
-    }
 }
 
 int main() {
