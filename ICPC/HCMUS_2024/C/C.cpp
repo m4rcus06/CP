@@ -1,30 +1,45 @@
 #include <bits/stdc++.h>
 using namespace std;
- 
-#ifdef LOCAL
-#include </home/marcus06/vimcp/Library/debug.h>
-#else
-#define debug(...) 
-#endif
 
 const int L = 2520;
 
-int cache[18][L][L + 1];
+vector <int> v;
+int64_t cache[20][2][2][50][L + 5];
 
 int lcm (int a, int b) {
     return a * b / __gcd(a, b);
 }
 
-int f(string &S, int idx, int lead, int tight, int LCM, int MOD) {
+void generate_LCM() {
+    for (int mask = 0; mask < (1 << 9); ++mask) {
+        int l = 1;
+        for (int i = 0; i < 9; ++i) {
+            if (mask >> i & 1) {
+                l = lcm(l, i + 1);
+            }
+        }
+        v.push_back(l);
+    }
+
+    sort(v.begin(), v.end());
+    v.erase(unique(v.begin(), v.end()), v.end());
+}
+
+int get_idx(int value) {
+    return lower_bound(v.begin(), v.end(), value) - v.begin();
+}
+
+int64_t f(string &S, int idx, int lead, int tight, int LCM, int MOD) {
     if (idx >= (int) S.size()) {
-        if (!lead && MOD % LCM == 0) {
+        if (!lead && (MOD % LCM) == 0) {
             return 1;
         }
         return 0;
     }
     
-    int &res = cache[idx][LCM][MOD];
-    if (cache[idx][LCM][MOD] != -1) return res;
+    int LCM_idx = get_idx(LCM);
+    int64_t &res = cache[idx][tight][lead][LCM_idx][MOD];
+    if (cache[idx][tight][lead][LCM_idx][MOD] != -1) return res;
     res = 0;
 
     int l = (lead ? 0 : 1);
@@ -42,12 +57,22 @@ int f(string &S, int idx, int lead, int tight, int LCM, int MOD) {
 }
  
 void solve() {
-    string a, b;
+    long long a, b;
     cin >> a >> b;
+    a -= 1;
 
+    string L = to_string(a), R = to_string(b);
+
+    generate_LCM();
     memset(cache, -1, sizeof cache);
+    int64_t res = f(R, 0, 1, 1, 1, 0); 
 
-    cout << f(b, 0, 1, 1, 1, 0) - f(a, 0, 1, 1, 1, 0) << '\n';
+    if (a > 0) {
+        memset(cache, -1, sizeof cache);
+        res -= f(L, 0, 1, 1, 1, 0);
+    }
+
+    cout << res << '\n';
 }
  
 int main() {
@@ -69,4 +94,3 @@ int main() {
  
     return 0;
 }
-
