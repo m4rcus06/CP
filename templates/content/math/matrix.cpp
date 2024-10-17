@@ -1,12 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
-
-#ifdef LOCAL
-#include </Coding/Library/debug.h>
-#else
-#define debug(...)
-#endif
-
 template <typename T>
 class matrix {
 private:
@@ -104,16 +95,3 @@ public:
 };
 
 using mat = matrix<int>;
-
-void solve() {
-}
-
-int main() {
-    cin.tie(0)->sync_with_stdio(0);
-
-    int tt = 1;
-    while(tt--) {
-        solve();
-    }
-    return 0;
-}
