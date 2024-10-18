@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
+using lli = int64_t;
 
 //replace with your directory
 #ifdef LOCAL
