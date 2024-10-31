@@ -29,67 +29,66 @@ const int dy[] = {1, -1, 0, 0};
  
 void solve() {
 	int N, K, R; cin >> N >> K >> R;
-	Vec <2, set <pair <int, int>>> roads(N, N);
+	set <array <int, 4>> roads;
 	for (int i = 0; i < R; ++i) {
 		int x, y, u, v;
 		cin >> x >> y >> u >> v;
 		--x, --y, --u, --v;
 
-		roads[x][y].insert({u, v});
-		roads[u][v].insert({x, y});
+		roads.insert({x, y, u, v});
+		roads.insert({u, v, x, y});
 	}
 
-	Vec <3, int> state(N, N, 2, 0);
-	auto BFS = [&](int i, int j) -> void{
-		queue <array <int, 3>> Q;
-		Q.push({i, j, 0});
+	Vec <2, bool> cows(N, N, 0);
+	for (int i = 0; i < K; ++i) {
+		int x, y;
+		cin >> x >> y;
+		--x, --y;
 
+		cows[x][y] = true;
+	}
+
+	Vec <2, bool> vis(N, N, false);
+	auto BFS = [&](int i, int j) -> int {
+		vis[i][j] = true;
+		queue <pair <int, int>> Q;
+		Q.push({i, j});
+
+		int res = 0;
 		while (!Q.empty()) {
 			auto t = Q.front(); Q.pop();
-			int x = t[0], y = t[1], w = t[2];
+			int x = t.first, y = t.second;
 
-			for (auto &itr : roads[x][y]) {
-				int u = itr.first, v = itr.second;
+			res += cows[x][y];
 
-				if (state[u][v][1] == 0) {
-					state[u][v][1] = 1;
-					Q.push({u, v, 1});
-				}
-			}
-
-			for (int k = 0; k < 4; ++k) {
-				int u = x + dx[k], v = y + dy[k];
-
+			for (int i = 0; i < 4; ++i) {
+				int u = x + dx[i], v = y + dy[i];
 				if (u < 0 || u >= N || v < 0 || v >= N) continue;
-				if (roads[x][y].find({u, v}) != roads[x][y].end()) continue;
+				if (roads.find({x, y, u, v}) != roads.end()) continue;
 
-				if (state[u][v][w] == 0) {
-					state[u][v][w] = 1;
-					Q.push({u, v, w});
+				if (!vis[u][v]){
+					vis[u][v] = true;
+					Q.push({u, v});
 				}
 			}
 		}
+		return res;
 	};
 
-	vector <pair <int, int>> cows(K);
-	for (int i = 0; i < K; ++i) {
-		cin >> cows[i].first >> cows[i].second;
-		--cows[i].first, --cows[i].second;
+	vector <int> components;
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < N; ++j) {
+			if (!vis[i][j] && cows[i][j]) {
+				components.push_back(BFS(i, j));
+			}
+		}
 	}
 
 	int ans = 0;
-	for (int i = 0; i < K; ++i) {
-		BFS(cows[i].first, cows[i].second);
-
-		for (int j = i + 1; j < K; ++j) {
-			int x = cows[j].first, y = cows[j].second;
-
-			if (state[x][y][0] == 0 && state[x][y][1] == 1) {
-				ans += 1;
-			}
+	for (int i = 0; i < (int) components.size(); ++i) {
+		for (int j = i + 1; j < (int) components.size(); ++j) {
+			ans += components[i] * components[j];
 		}
-
-		fill(state.begin(), state.end(), Vec <2, int> (N, 2, 0));
 	}
 
 	cout << ans << '\n';
