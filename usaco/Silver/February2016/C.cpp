@@ -15,6 +15,7 @@ bool cache[N][N][N];
 
 int x, y, k, m;
 int ans = 1e9 + 7;
+
 void DFS(int f, int s, int cnt) {
     if (cnt > k) return;
     ans = min(ans, abs(f + s - m));
