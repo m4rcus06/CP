@@ -25,31 +25,43 @@ const int N = 250;
 const int dx[] = {0, 0, -1, 1};
 const int dy[] = {-1, 1, 0, 0};
 
-int n, a[N][N];
-Vec <2, bool> vis(N, N, false);
+int run_counts = 0;
 
-int single_max = 0;
-int DFS_single(int i, int j, int c) {
+int n, a[N][N];
+
+Vec <2, bool> vis(N, N, false);
+Vec <2, int> region_id(N, N);
+int cnt = 0;
+int DFS(int i, int j, int c) {
+	vis[i][j] = true;
+	region_id[i][j] = cnt;
 	int res = 1;
 	for (int k = 0; k < 4; ++k) {
 		int u = i + dx[k], v = j + dy[k];
 		if (u < 0 || u >= n || v < 0 || v >= n || a[u][v] != c) continue;
-		res += DFS_single(u, v, c);
+		if (vis[u][v] == false) res += DFS(u, v, c);
 	}
 	return res;
 }
 
-int max_reg = 0;
-int DFS_reg(int i, int j, int c1, int c2) {
-	int res = 1;
-	for (int k = 0; k < 4; ++k) {
-		int u = i + dx[k], v = j + dy[k];
-		if (u < 0 || u >= n || v < 0 || v >= n) continue;
-		if (a[u][v] == c1 || a[u][v] == c2) {
-			
+vector <int> region_size, region_color;
+Vec <2, int> graph;
+map <pair <int, int>, set <int>> seen;
+int DFS_region(int u, int c1, int c2) {
+	if (seen[{c1, c2}].find(u) != seen[{c1, c2}].end()) return 0;
+	++run_counts;
+	int res = region_size[u];
+	seen[{c1, c2}].insert(u);
+
+	for (int &v: graph[u]) {
+		if (region_color[v] == c1 || region_color[v] == c2) {
+			res += DFS_region(v, c1, c2);
 		}
 	}
-} 
+
+	return res;
+}
+
 void solve() {
 	cin >> n;
 	for (int i = 0; i < n; ++i) {
@@ -58,31 +70,59 @@ void solve() {
 		}
 	}
 
-	Vec <1, int> nums;
 	for (int i = 0; i < n; ++i) {
 		for (int j = 0; j < n; ++j) {
-			nums.push_back(a[i][j]);
-		}
-	}
-	sort(nums.begin(), nums.end());
-	nums.resize(unique(nums.begin(), nums.end()) - nums.begin());
-	for (int i = 0; i < (int) nums.size(); ++i) {
-		for (int j = i + 1; j < (int) nums.size(); ++j) {
-			for (int x = 0; x < n; ++x) {
-				for (int y = 0; y < n; ++y) {
-					if (a[x][y] == nums[i] || a[x][y] == nums[j]) {
-						DFS_reg(x, y, x, y);
-					}
-				}
+			if (vis[i][j] == false) {
+				region_color.push_back(a[i][j]);
+				region_size.push_back(DFS(i, j, a[i][j]));
+				cnt += 1;
 			}
 		}
-	} 
+	}
+
+	int graph_size = cnt;
+	graph.resize(graph_size);
+	for (int i = 0; i < n; ++i) {
+		for (int j = 0; j < n; ++j) {
+			if (i - 1 >= 0 && region_id[i - 1][j] != region_id[i][j]) {
+				graph[region_id[i][j]].push_back(region_id[i - 1][j]);
+				graph[region_id[i - 1][j]].push_back(region_id[i][j]);
+			}
+			if (j - 1 >= 0 && region_id[i][j - 1] != region_id[i][j]) {
+				graph[region_id[i][j]].push_back(region_id[i][j - 1]);
+				graph[region_id[i][j - 1]].push_back(region_id[i][j]);
+			}
+		}
+	}
+
+	for (int i = 0; i < graph_size; ++i) {
+		sort(graph[i].begin(), graph[i].end());
+		graph[i].resize(unique(graph[i].begin(), graph[i].end()) - graph[i].begin());
+	}
+
+	map <pair <int, int>, set <int>> seen;
+	int two_teams_sz = 0;
+	for (int i = 0; i < graph_size; ++i) {
+		for (int &j : graph[i]) {
+			pair <int, int> cur = {region_color[i], region_color[j]};
+			if (cur.first > cur.second) swap(cur.first, cur.second);
+			if (seen[cur].find(i) != seen[cur].end()) continue;
+
+			two_teams_sz = max(two_teams_sz, DFS_region (i, cur.first, cur.second));
+		}
+	}
+
+	int one_team_sz = *max_element(region_size.begin(), region_size.end());
+	cout << one_team_sz << '\n' << two_teams_sz << '\n';
 }
  
 int main() {
     std::cin.tie(0)->sync_with_stdio(0);
 #ifdef LOCAL
     auto begin = std::chrono::high_resolution_clock::now();
+#else
+    freopen("multimoo.in", "r", stdin);
+    freopen("multimoo.out", "w", stdout);
 #endif
  
     int tt = 1;
