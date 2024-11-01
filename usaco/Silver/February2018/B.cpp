@@ -4,7 +4,7 @@ using lli = int64_t;
 
 //replace with your directory
 #ifdef LOCAL
-#include <_>
+#include <C:/Coding/CP/templates/content/debug/debug.h>
 #else
 #define debug(...) 
 #endif
@@ -23,14 +23,54 @@ struct Vec<1, T> : public vector<T> {
     Vec(int n = 0, T val = T()) : std::vector<T>(n, val) {}
 };
 }
+
+const int MAX_SIZE = 250;
+
+int N, B;
+int f[MAX_SIZE], s[MAX_SIZE], d[MAX_SIZE];
+bool vis[MAX_SIZE][MAX_SIZE];
+
+int ans = 1e9 + 7;
+void DFS(int i, int j) {
+	if (j >= B) return;
+	if (i == N - 1) {
+		ans = min(ans, j);
+		return;
+	}
+
+	if (vis[i][j] == true) return;
+	vis[i][j] = true;
+
+
+	DFS(i, j + 1);
+	if (f[i] > s[j]) return;
+
+	for (int k = i + 1; k <= min(N - 1, i + d[j]); ++k) {
+		if (f[k] <= s[j]) DFS(k, j);
+	}
+}
  
 void solve() {
+	cin >> N >> B;
+	for (int i = 0; i < N; ++i) {
+		cin >> f[i];
+	}
+
+	for (int i = 0; i < B; ++i) {
+		cin >> s[i] >> d[i];
+	}
+	DFS(0, 0);
+
+	cout << ans << '\n';
 }
  
 int main() {
     std::cin.tie(0)->sync_with_stdio(0);
 #ifdef LOCAL
     auto begin = std::chrono::high_resolution_clock::now();
+#else
+    freopen("snowboots.in", "r", stdin);
+    freopen("snowboots.out", "w", stdout);
 #endif
  
     int tt = 1;
