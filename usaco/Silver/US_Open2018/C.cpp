@@ -25,8 +25,6 @@ const int N = 250;
 const int dx[] = {0, 0, -1, 1};
 const int dy[] = {-1, 1, 0, 0};
 
-int run_counts = 0;
-
 int n, a[N][N];
 
 Vec <2, bool> vis(N, N, false);
@@ -49,7 +47,6 @@ Vec <2, int> graph;
 map <pair <int, int>, set <int>> seen;
 int DFS_region(int u, int c1, int c2) {
 	if (seen[{c1, c2}].find(u) != seen[{c1, c2}].end()) return 0;
-	++run_counts;
 	int res = region_size[u];
 	seen[{c1, c2}].insert(u);
 
@@ -100,7 +97,6 @@ void solve() {
 		graph[i].resize(unique(graph[i].begin(), graph[i].end()) - graph[i].begin());
 	}
 
-	map <pair <int, int>, set <int>> seen;
 	int two_teams_sz = 0;
 	for (int i = 0; i < graph_size; ++i) {
 		for (int &j : graph[i]) {
