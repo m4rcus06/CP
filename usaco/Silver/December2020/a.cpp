@@ -8,8 +8,40 @@ using lli = int64_t;
 #define debug(...) 
 #endif
 
+const int MAXN = 100000;
+int N;
+vector <int> g[MAXN];
+
+int DFS(int u, int parent) {
+    int cows = (int) g[u].size();
+    if (u == parent) ++cows;
+
+    int res = 0, cur = 1;
+    while (cur < cows) {
+        res += 1;
+        cur *= 2;
+    }
+
+    for (int v: g[u]) {
+        if (v != parent) {
+            res += DFS(v, u) + 1;
+        }
+    }
+
+    return res;
+}
 
 void solve() {
+    cin >> N;
+    for (int i = 0; i + 1 < N; ++i) {
+        int u, v; cin >> u >> v;
+        --u, --v;
+
+        g[u].push_back(v);
+        g[v].push_back(u);
+    }
+
+    cout << DFS(0, 0) << '\n';
 }
  
 int main() {
@@ -31,4 +63,3 @@ int main() {
  
     return 0;
 }
-
