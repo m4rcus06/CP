@@ -57,6 +57,9 @@ void subtask_2() {
 }
 
 struct LazySegmentTree {
+    struct Node {
+        
+    };
 };
 
 void subtask_3() {
