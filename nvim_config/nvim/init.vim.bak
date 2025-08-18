@@ -1,0 +1,60 @@
+set tabstop=4
+set nocompatible
+set shiftwidth=4
+set expandtab
+set autoindent
+set smartindent
+set ruler
+set showcmd
+set incsearch
+set shellslash
+set number
+set relativenumber
+set cino+=L0 
+filetype indent on
+filetype off
+setlocal indentkeys-=:
+
+"Plugin
+call plug#begin('~/.local/share/nvim/plugged')
+Plug 'loctvl842/monokai-pro.nvim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+call plug#end()
+
+" Bật highlight Tree-sitter bằng Lua
+lua << EOF
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = { "c", "cpp", "lua", "python" },
+  highlight = { enable = true },
+  indent = { enable = true },
+}
+EOF
+
+" Vim Script
+colorscheme monokai-pro
+
+" Bật màu và số dòng
+syntax on
+set number
+
+"Color
+highlight Visual cterm=NONE ctermbg=DarkGrey ctermfg=NONE guibg=#555555 guifg=NONE
+
+"Map compile and run Key
+autocmd filetype cpp nnoremap <F9> :w<CR>:terminal bash compile.sh %:r<CR>a 
+autocmd filetype cpp nnoremap <F10> :w<CR>:terminal ./%:r<CR>a
+
+"clipboard things
+let s:clip = '/mnt/c/Windows/System32/clip.exe'  " change this path according to your mount point
+if executable(s:clip)
+        augroup WSLYank
+                    autocmd!
+                            autocmd TextYankPost * if v:event.operator ==# 'y' | call system(s:clip, @0) | endif
+                                augroup END
+                            endif
+ 
+        au BufNewFile,BufRead *.tex
+            \ set nocursorline |
+            \ set nornu |
+            \ set number |
+            \ let g:loaded_matchparen=1 |
