@@ -1,10 +1,10 @@
 vim.opt.number = true --display line numbers
-vim.opt.relativenumber = true --display relative line numbers
 vim.opt.numberwidth = 2 --set width of line numnber column
 vim.opt.signcolumn = "yes"
 vim.opt.wrap = false
-vim.opt.scrolloff = 10
+vim.opt.scrolloff = 20
 vim.opt.sidescrolloff = 8
+vim.opt.relativenumber = true
 
 
 --Tab and Spacing
@@ -34,5 +34,3 @@ vim.opt.hlsearch = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
---enable syntax
-vim.cmd("syntax on")

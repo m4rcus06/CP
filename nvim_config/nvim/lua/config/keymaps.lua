@@ -8,13 +8,8 @@ vim.api.nvim_create_autocmd("FileType", {
   end
 })
 
--- Exit terminal mode and go back to previous buffer
-vim.api.nvim_create_autocmd("TermOpen", {
-    callback = function(args)
-        local bufnr= args.buf
-        vim.keymap.set('t', '<Esc>', '<C-\\><C-n>:bp<CR>', {buffer = bufnr, noremap = true, silent = true})
-    end
-})
+-- Exit terminal mode
+vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", {desc = "Exit terminal mode"})
 
 -- Text Moving
 vim.keymap.set("v", ">", ">gv")

@@ -1,8 +1,9 @@
 return {
-    "tanvirtin/monokai.nvim",
-    lazy = false,
-    priority = 1000,
-    config = function()
-        vim.cmd.colorscheme("monokai")
-    end
+    "blazkowolf/gruber-darker.nvim",
+    opts = {
+        bold = false,
+        italic = {
+          strings = false,
+        },
+    },
 }
