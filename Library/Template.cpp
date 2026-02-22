@@ -2,12 +2,6 @@
 using namespace std;
 using lli = long long;
 
-#ifdef LOCAL
-#include </home/marcus06/CP/Library/debug.h>
-#else
-#define debug(...) 
-#endif
-
 void solve() {
 }
 

@@ -8,26 +8,27 @@ using lli = long long;
 #define debug(...) 
 #endif
 
-/*How to use:
-  Tvector <int, 2> g(n); //graph
-  Tvector <int, 3> f(n, k, 2) = f[n][k][2]
-*/
-template <class Tp, int D = 1>
-struct Tvector : public vector<Tvector<Tp, D - 1>> {
-  template <class... Args>
-  Tvector(int n = 0, Args... args) : vector<Tvector<Tp, D - 1>>(n, Tvector<Tp, D - 1>(args...)) {}
-};
- 
-template <class Tp>
-struct Tvector<Tp, 1> : public vector<Tp> {
-  Tvector(int n = 0, Tp val = Tp()) : vector<Tp>(n, val) {}
-};
-
 void solve() {
-    int n, m;
-    cin >> n >> m;
-    cout << "HEHEHEHEHE";
+    int n;
+    cin >> n;
+    string a;
+    cin >> a;
+
+    int m;
+    cin >> m;
+    string b, c;
+    cin >> b >> c;
+    
+    for (int i = 0; i < m; ++i) {
+        if (c[i] == 'V') {
+            a = b[i] + a;
+        } else {
+            a += b[i];
+        }
+    }
+    cout << a << '\n';
 }
+ 
 
 int main() {
     std::cin.tie(0)->sync_with_stdio(0);
@@ -36,6 +37,7 @@ int main() {
 #endif
 
     int tt = 1;
+    cin >> tt;
     while (tt--) {
         solve();
     }
